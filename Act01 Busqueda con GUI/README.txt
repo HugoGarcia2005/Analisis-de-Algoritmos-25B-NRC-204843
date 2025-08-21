@@ -1,4 +1,4 @@
-Descargue el main.py y ejecútelo en su equipo
+Descargue el archivo main.py y ejecútelo en su equipo
 
 Seleccione un tamaño de arreglo y genérelo con el botón “Generar Arreglo”
 
@@ -9,3 +9,4 @@ Posterior a ello seleccione el método de búsqueda con los botones “búsqueda
 Mire los resultados y repita con otro tamaño del arreglo siguiendo los pasos anteriores
 
 Para borrar los datos de la grafica seleccione “Limpiar Gráfica” 
+
