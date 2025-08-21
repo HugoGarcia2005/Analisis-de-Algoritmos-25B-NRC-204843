@@ -14,13 +14,18 @@ def generadorNumeroAleatorios(numerosAGenerar):
     numerosAleatorios = []
 
     for i in range(numerosAGenerar):
-        numeroAleatorio = random.randint(1, 1_000)
+        numeroAleatorio = random.randint(1, 10_000)
         numerosAleatorios.append(numeroAleatorio)
     return numerosAleatorios
 
-def ordenadorNumeros(numerosDesordenados,algoritmoOrdenamiento):
+def medirTiempo(arreglo,algoritmo):
     inicioTiempoEjecucionAlgoritmo = time.perf_counter()
+    numerosOrdenados = ordenadorNumeros(arreglo,algoritmo)
+    finTiempoEjecucionAlgoritmo = time.perf_counter()
+    tiempoTotalEjecucionAlgoritmo = (finTiempoEjecucionAlgoritmo - inicioTiempoEjecucionAlgoritmo) * FACTOR_CONVERTIR_MILISEGUNDOS
+    return numerosOrdenados, tiempoTotalEjecucionAlgoritmo    
 
+def ordenadorNumeros(numerosDesordenados,algoritmoOrdenamiento):
     if algoritmoOrdenamiento == OPCION_BUBBLE_SORT:
         numerosOrdenados = bubbleSort(numerosDesordenados)
     elif algoritmoOrdenamiento == OPCION_MERGE_SORT:
@@ -29,10 +34,7 @@ def ordenadorNumeros(numerosDesordenados,algoritmoOrdenamiento):
         numerosOrdenados = quickSort(numerosDesordenados)
     else:
         print("Error: Algoritmo no soportado :(")
-
-    finTiempoEjecucionAlgoritmo = time.perf_counter()
-    tiempoTotalEjecucionAlgoritmo = (finTiempoEjecucionAlgoritmo - inicioTiempoEjecucionAlgoritmo) * FACTOR_CONVERTIR_MILISEGUNDOS
-    return numerosOrdenados, tiempoTotalEjecucionAlgoritmo
+    return numerosOrdenados
 
 def bubbleSort(arr):
     n = len(arr)
@@ -75,14 +77,53 @@ def quickSort(arr):
     derecha = [x for x in arr if x > pivote]
     return quickSort(izquierda) + medio + quickSort(derecha)
 
-print("Generando 10 numeros aleatorios")
-diezNumerosAleatorios = generadorNumeroAleatorios(10)
-print(f"{diezNumerosAleatorios}\n")
+def generarGraficaComparativa():
+    # Tamaños de arreglo a probar: de 50 en 50 hasta 1000
+    tamanos = list(range(50, 1001, 50))
+    
+    # Listas para almacenar los tiempos de cada algoritmo
+    tiempos_bubble = []
+    tiempos_merge = []
+    tiempos_quick = []
+    
+    print("Generando datos para la gráfica...")
+    
+    for tamano in tamanos:
+        print(f"Procesando arreglo de tamaño: {tamano}")
+        
+        # Generar arreglo aleatorio
+        arreglo = generadorNumeroAleatorios(tamano)
+        
+        # Medir tiempo de Bubble Sort
+        _, tiempo_bubble = medirTiempo(arreglo, OPCION_BUBBLE_SORT)
+        tiempos_bubble.append(tiempo_bubble)
+        
+        # Medir tiempo de Merge Sort
+        _, tiempo_merge = medirTiempo(arreglo, OPCION_MERGE_SORT)
+        tiempos_merge.append(tiempo_merge)
+        
+        # Medir tiempo de Quick Sort
+        _, tiempo_quick = medirTiempo(arreglo, OPCION_QUICK_SORT)
+        tiempos_quick.append(tiempo_quick)
+    
+    # Crear la gráfica
+    plt.figure(figsize=(10, 6))
+    
+    plt.plot(tamanos, tiempos_bubble, 'r-', label='Bubble Sort', linewidth=2)
+    plt.plot(tamanos, tiempos_merge, 'g-', label='Merge Sort', linewidth=2)
+    plt.plot(tamanos, tiempos_quick, 'b-', label='Quick Sort', linewidth=2)
+    
+    plt.xlabel('Tamaño del Arreglo')
+    plt.ylabel('Tiempo de Ejecución (ms)')
+    plt.title('Comparación de Tiempos de Algoritmos de Ordenamiento')
+    plt.legend()
+    plt.grid(True, alpha=0.3)
+    
+    # Mostrar la gráfica
+    plt.show()
+    
+    return tiempos_bubble, tiempos_merge, tiempos_quick
 
-# La función ordenador retorna (lista_ordenada, tiempo)
-# {tiempoEjecucion:.6f} ajusta en 6 decimales la salida de tiempoEjecucion
-arregloOrdenado, tiempoEjecucion = ordenadorNumeros(diezNumerosAleatorios, OPCION_BUBBLE_SORT)
 
-print("=== RESULTADOS BUBBLE SORT ===")
-print(f"Arreglo ordenado: {arregloOrdenado}")
-print(f"Tiempo de ejecución: {tiempoEjecucion:.6f} ms")
+generarGraficaComparativa()
+
